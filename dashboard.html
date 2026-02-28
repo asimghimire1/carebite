@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Wellness Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1f3a14",
+                        "accent": "#6b9f52",
+                        "sage": {
+                            50: "#f0f5e8",
+                            100: "#e1ebd2",
+                            200: "#c3d7a5",
+                            300: "#a5c378",
+                            400: "#87af4b",
+                            500: "#6b9f52",
+                            600: "#407a2d",
+                            700: "#2d5f23",
+                        },
+                        "cream": {
+                            50: "#fdfcfb",
+                            100: "#f0f5e8",
+                            200: "#e1ebd2",
+                        },
+                        "background-light": "#f0f5e8",
+                        "background-dark": "#0f1f0a",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .serif-heading { font-family: 'Playfair Display', serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(68, 101, 52, 0.1);
+        }
+        
+        /* Material Symbols Icon Styles */
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            display: inline-flex;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+
+        /* Override hover zoom for smooth effect */
+        img[class*="group-hover:scale-110"] {
+            transition: transform 0.3s ease-out !important;
+        }
+
+        .group:hover img[class*="scale-110"] {
+            transform: scale(1.05) !important;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<nav class="sticky top-0 z-50 bg-cream-100/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-sage-200 dark:border-sage-700">
+<div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+<div class="flex items-center gap-12">
+<div class="flex items-center gap-2">
+<img src="logo.png" alt="Care Bite Logo" class="h-16 w-16 rounded-lg object-contain">
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-sage-600 hover:text-primary transition-colors" href="dashboard.html">Home</a>
+<a class="text-sm font-medium text-sage-600 hover:text-primary transition-colors" href="shop.html">Shop by Condition</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button id="cartBtn" class="p-2 hover:bg-primary/5 rounded-full relative" onclick="openShoppingCart()">
+<span class="material-symbols-outlined" style="font-size: 24px;">shopping_cart</span>
+<span id="cartCount" class="absolute top-1 right-1 bg-primary text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
+</button>
+<button id="authBtn" class="px-4 py-2 text-sm font-bold text-white bg-primary/20 hover:bg-primary/30 rounded border border-primary transition-all" style="border-radius: 7px;">
+<span id="authText">Logout</span>
+</button>
+</div>
+</div>
+</nav>
+<main class="max-w-7xl mx-auto px-6 py-10">
+<!-- Hero Section -->
+<section class="mb-16">
+<div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sage-600 to-sage-500 dark:from-sage-700 dark:to-sage-800 p-10 md:p-16 text-white">
+<div class="relative z-10 max-w-2xl">
+<span class="text-sm font-bold text-sage-200 uppercase tracking-widest mb-2 block">LIMITED EDITION</span>
+<h2 class="serif-heading text-4xl md:text-5xl mb-4">The Spring Wellness Collection</h2>
+<p class="text-sage-100 text-lg opacity-90 leading-relaxed mb-8">Discover our curated selection of seasonal herbs and bio-available nutrients designed for total rejuvenation.</p>
+<div class="flex flex-wrap gap-4">
+<button class="bg-accent text-white px-8 py-3 rounded-xl font-bold text-sm tracking-wide hover:brightness-110 transition-all shadow-lg shadow-accent/20">SHOP COLLECTION</button>
+<button class="bg-white/10 backdrop-blur-sm border border-white/20 px-8 py-3 rounded-xl font-bold text-sm tracking-wide hover:bg-white/20 transition-all">VIEW BEST SELLERS</button>
+</div>
+</div>
+<div class="absolute top-0 right-0 h-full w-1/2 opacity-20 hidden lg:block">
+<img class="h-full w-full object-cover" data-alt="Abstract soft green botanical patterns" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvbssIfhA4e2CNxznHqetBk8YvyuUbVxqPdkXTrkVPvgJrLRPLLLP3C_kjwmEXCiB_y68ZTaoaNDS33la9sQOmS3VqCGY6g3DzBLY-9OTGNGd7dgctGmDhSBF1fYTVwQBvF6GbiwtgIaoBUmf_BM8x8MVdgWWfLVvLTFUvBemLzbtWZlcypcBSeZzM41LHlcv61uQ1IizB4vJ8k9w31Jqwb7lNSShcqogqb-pUJrFtRo6VV47iq9sXe_qxfztiJIhpHk_9C6Sd5t1W"/>
+</div>
+</div>
+</section>
+
+<!-- Curated Collections -->
+<section class="mb-16">
+<h3 class="serif-heading text-2xl mb-8 text-sage-700 dark:text-sage-200">Curated Collections</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Featured Products Card -->
+<div class="group relative overflow-hidden rounded-3xl p-8 bg-gradient-to-br from-sage-50 to-sage-100 dark:from-sage-700/40 dark:to-sage-600/40 border border-sage-200 dark:border-sage-600/40 hover:shadow-lg transition-all">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h4 class="font-bold text-lg text-sage-800 dark:text-sage-100 mb-2">Featured Products</h4>
+<p class="text-sm text-sage-600 dark:text-sage-400">Our handpicked essentials</p>
+</div>
+<div class="p-3 bg-sage-200 dark:bg-sage-600/50 rounded-xl">
+<span class="material-symbols-outlined text-sage-700 dark:text-sage-300" style="font-size: 24px;">star</span>
+</div>
+</div>
+<a href="shop.html" class="text-sm font-bold text-sage-700 dark:text-sage-400 flex items-center gap-1 hover:underline mt-4">
+EXPLORE <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+</a>
+</div>
+
+<!-- New Arrivals Card -->
+<div class="group relative overflow-hidden rounded-3xl p-8 bg-gradient-to-br from-primary to-sage-700 dark:from-primary/80 dark:to-sage-700/80 border border-primary/40 dark:border-sage-600/40 hover:shadow-lg transition-all">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h4 class="font-bold text-lg text-white dark:text-white mb-2">New Arrivals</h4>
+<p class="text-sm text-white/80 dark:text-white/80">Latest wellness innovations</p>
+</div>
+<div class="p-3 bg-white/20 dark:bg-white/10 rounded-xl">
+<span class="material-symbols-outlined text-white dark:text-white" style="font-size: 24px;">new_releases</span>
+</div>
+</div>
+<a href="shop.html" class="text-sm font-bold text-white dark:text-white flex items-center gap-1 hover:underline mt-4">
+SHOP NOW <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+</a>
+</div>
+
+<!-- For Your Condition Card -->
+<div class="group relative overflow-hidden rounded-3xl p-8 bg-gradient-to-br from-sage-50 to-sage-100 dark:from-sage-700/40 dark:to-sage-600/40 border border-sage-200 dark:border-sage-600/40 hover:shadow-lg transition-all">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h4 class="font-bold text-lg text-sage-800 dark:text-sage-100 mb-2">For Your Condition</h4>
+<p class="text-sm text-sage-600 dark:text-sage-400">Personalized health support</p>
+</div>
+<div class="p-3 bg-sage-200 dark:bg-sage-600/50 rounded-xl">
+<span class="material-symbols-outlined text-sage-700 dark:text-sage-300" style="font-size: 24px;">favorite</span>
+</div>
+</div>
+<a href="shop.html" class="text-sm font-bold text-sage-700 dark:text-sage-400 flex items-center gap-1 hover:underline mt-4">
+BROWSE <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+<!-- Trending Now Section -->
+<section class="mb-16">
+<div class="flex items-center justify-between mb-8">
+<h3 class="serif-heading text-2xl text-sage-700 dark:text-sage-200">Trending Now</h3>
+<a class="text-sm font-bold text-primary border-b-2 border-primary/20" href="shop.html">View All</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Product 1 - Chickpea Snack (Diabetes) -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative h-48 overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuASzXKATA03u0pjUySxfnFWKvEyCp84yFyUiuu9yiaBk3i4WibH1IaZ_m6ilSdYcVRDrbwcvDZ159gFTUvGGgl-E31fzmjrx9sqzkreqT1bE1HMNM-OCC-AU65GJ57ejJP7HjjjtLOiRlUdPrXIWnGiBdrilxUqBxU1ON2xJ1VKl9Btt8Fp5fgXHgB2qdUkANuFdnKg1Xh53IQJy6E01rTl4WOcwstXb9VjtB273HQfFsdWJpTtTjiDlkPQvhmVercIbDjKM8rn5VYy"/>
+</div>
+<div class="p-6">
+<p class="text-xs font-bold text-blue-600 uppercase tracking-widest mb-2">Diabetes Management</p>
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Chickpea Snack</h4>
+<span class="font-bold text-primary">Rs.12</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6">High-protein, fiber-rich snack for steady glucose levels.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+
+<!-- Product 2 - Hibiscus Tea (Hypertension) -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative h-48 overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://www.teavision.com.au/cdn/shop/articles/hibiscus_tea_benefits_1024x.jpg?v=1716874855"/>
+</div>
+<div class="p-6">
+<p class="text-xs font-bold text-red-600 uppercase tracking-widest mb-2">Hypertension Support</p>
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Hibiscus Tea</h4>
+<span class="font-bold text-primary">Rs.14</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Natural blood pressure reducer with antioxidants, caffeine-free.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Featured Category Products Section -->
+<section class="mb-16">
+<h3 class="serif-heading text-2xl text-sage-700 dark:text-sage-200 mb-8">Trending by Category</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+<!-- PCOS - Spearmint Tea -->
+<div class="group bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-1 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAbcZ3ahPY94sYQ7hBZD5FtEyYhKS7PBsOZbrQTv8oUiMNQWg-kl0WMj7JgZVMB-vFiB0W-p6rPbK5y_JmWZKHAR_PvxR8bm9k_srujyknj8daX3WtfxFp3aClNrkIZBY3IMpfdEpzWg82p9yaPVbE6S0tNDUgsjY3CHEl8KRrQLihJgks1kNaPnkPVHxckWieLYWYhIdjBEuQkNy7X-G8i1jIpeDX4fFcll8jbDmzD_QGHVGaObgJOygbJAjAv0CwKhlC7btz-q8b"/>
+</div>
+<div class="p-4">
+<h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 mb-1">Spearmint Tea</h4>
+<p class="text-xs text-slate-500 mb-2">PCOS Support</p>
+<div class="flex justify-between items-center">
+<span class="font-bold text-primary">Rs.19</span>
+<button class="addToCart p-2 text-primary hover:bg-primary/10 rounded-lg transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">add_circle</span>
+</button>
+</div>
+</div>
+</div>
+
+<!-- Heart Health - Flax & Chia -->
+<div class="group bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-1 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://pranafoods.ca/cdn/shop/products/Prana_produit_siteweb_Superseed_linchia_1.jpg?v=1681764912"/>
+</div>
+<div class="p-4">
+<h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 mb-1">Flax & Chia Mix</h4>
+<p class="text-xs text-slate-500 mb-2">Heart Health</p>
+<div class="flex justify-between items-center">
+<span class="font-bold text-primary">Rs.17</span>
+<button class="addToCart p-2 text-primary hover:bg-primary/10 rounded-lg transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">add_circle</span>
+</button>
+</div>
+</div>
+</div>
+
+<!-- Thyroid - Kelp Seaweed -->
+<div class="group bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-1 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://i0.wp.com/post.healthline.com/wp-content/uploads/2020/03/kelp-1296x728-header-1.jpg?w=1155&h=1528"/>
+</div>
+<div class="p-4">
+<h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 mb-1">Kelp Seaweed</h4>
+<p class="text-xs text-slate-500 mb-2">Thyroid Support</p>
+<div class="flex justify-between items-center">
+<span class="font-bold text-primary">Rs.14</span>
+<button class="addToCart p-2 text-primary hover:bg-primary/10 rounded-lg transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">add_circle</span>
+</button>
+</div>
+</div>
+</div>
+
+<!-- Diabetes - Fenugreek -->
+<div class="group bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-1 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUpZlzUmt2B8QLIwAweiw3h4fLWgpZYqOm3U7Fh0RsOnqTWlkSG_Anot7fjsrmFaxzvP7pyEykHlef-TYpOFkP73UrsxADlMVeO3tObQel&s=10"/>
+</div>
+<div class="p-4">
+<h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 mb-1">Fenugreek Seeds</h4>
+<p class="text-xs text-slate-500 mb-2">Diabetes Mgmt</p>
+<div class="flex justify-between items-center">
+<span class="font-bold text-primary">Rs.15</span>
+<button class="addToCart p-2 text-primary hover:bg-primary/10 rounded-lg transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">add_circle</span>
+</button>
+</div>
+</div>
+</div>
+
+<!-- Hypertension - Potassium Blend -->
+<div class="group bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-1 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://www.organicnationeg.com/cdn/shop/files/Potassium-Blend-Box-_-Bottle-mockup_b30b7840-aeb2-4554-8eae-698c74501e64.png?v=1771463370&width=720"/>
+</div>
+<div class="p-4">
+<h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 mb-1">Potassium Blend</h4>
+<p class="text-xs text-slate-500 mb-2">Hypertension</p>
+<div class="flex justify-between items-center">
+<span class="font-bold text-primary">Rs.18</span>
+<button class="addToCart p-2 text-primary hover:bg-primary/10 rounded-lg transition-all">
+<span class="material-symbols-outlined" style="font-size: 20px;">add_circle</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+
+<!-- Shopping Cart Modal -->
+<div id="shoppingCartModal" class="hidden fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm">
+<div class="bg-white dark:bg-slate-800 w-full sm:w-96 h-full overflow-y-auto flex flex-col">
+<!-- Cart Header -->
+<div class="sticky top-0 bg-white dark:bg-slate-800 p-6 border-b border-primary/10 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<img src="logo.png" alt="Care Bite Logo" class="h-8 w-8 rounded object-contain">
+<h2 class="serif-heading text-xl font-bold text-slate-900 dark:text-slate-100">Your Shopping Bag</h2>
+</div>
+<button onclick="closeShoppingCart()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition">
+<span class="material-symbols-outlined" style="font-size: 28px;">close</span>
+</button>
+</div>
+
+<!-- Cart Items -->
+<div id="cartItems" class="flex-1 p-6 space-y-4 overflow-y-auto">
+<!-- Cart items will be inserted here -->
+</div>
+
+<!-- Order Summary -->
+<div class="border-t border-primary/10 p-6 bg-slate-50 dark:bg-slate-700/30">
+<h3 class="text-slate-900 dark:text-slate-100 font-bold mb-4">Order Summary</h3>
+<div class="space-y-2 text-sm mb-4">
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span>Subtotal</span>
+<span id="subtotal">Rs.0</span>
+</div>
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span>Shipping</span>
+<span id="shipping">Rs.5</span>
+</div>
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span>Estimated Tax</span>
+<span id="tax">Rs.0</span>
+</div>
+</div>
+<div class="flex justify-between text-lg font-bold text-slate-900 dark:text-slate-100 border-t border-primary/10 pt-4 mb-6">
+<span>Total</span>
+<span id="total">Rs.0</span>
+</div>
+<button id="checkoutBtn" class="w-full bg-primary hover:bg-sage-700 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2">
+Proceed to Checkout <span class="material-symbols-outlined" style="font-size: 20px;">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+
+<!-- Checkout Modal Popup -->
+<div id="checkoutModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+<!-- Backdrop -->
+<div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+
+<!-- Modal Container -->
+<div class="relative w-full max-w-[480px] bg-white rounded-2xl shadow-2xl overflow-hidden border border-primary/10">
+<!-- Header -->
+<div class="flex items-center justify-between border-b border-primary/10 px-6 py-4 bg-primary/5">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-2xl">account_balance_wallet</span>
+<h2 class="text-primary text-lg font-bold">Checkout</h2>
+</div>
+<button id="closeCheckout" class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+
+<!-- Content -->
+<div class="px-6 py-6">
+<div class="mb-6">
+<p class="text-primary text-2xl font-bold">Select Payment Method</p>
+<p class="text-slate-600 text-sm mt-1">Secure and fast payments for your wellness products</p>
+</div>
+
+<!-- Order Summary -->
+<div class="bg-sage-50 rounded-xl p-4 mb-6 border border-primary/10">
+<div class="flex justify-between items-center">
+<p class="text-slate-700 text-sm font-medium">Total Amount</p>
+<p class="text-primary text-xl font-bold" id="checkoutTotal">Rs.0</p>
+</div>
+</div>
+
+<!-- Payment Methods -->
+<div class="flex flex-col gap-3 mb-6">
+<!-- eSewa -->
+<label class="flex items-center gap-4 rounded-xl border border-primary/20 bg-sage-50/50 p-4 cursor-pointer hover:border-primary/40 hover:bg-sage-100 transition-all">
+<input checked="" class="h-5 w-5 border-2 border-primary bg-transparent text-primary accent-primary" name="payment_method" type="radio"/>
+<div class="flex grow items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">payments</span>
+</div>
+<div class="flex flex-col">
+<p class="text-slate-900 text-sm font-semibold">eSewa</p>
+<p class="text-slate-600 text-xs">Pay with your eSewa digital wallet</p>
+</div>
+</div>
+</label>
+
+<!-- Khalti -->
+<label class="flex items-center gap-4 rounded-xl border border-primary/20 bg-sage-50/50 p-4 cursor-pointer hover:border-primary/40 hover:bg-sage-100 transition-all">
+<input class="h-5 w-5 border-2 border-primary bg-transparent text-primary accent-primary" name="payment_method" type="radio"/>
+<div class="flex grow items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">wallet</span>
+</div>
+<div class="flex flex-col">
+<p class="text-slate-900 text-sm font-semibold">Khalti</p>
+<p class="text-slate-600 text-xs">Pay with your Khalti digital wallet</p>
+</div>
+</div>
+</label>
+
+<!-- Bank Transfer -->
+<label class="flex items-center gap-4 rounded-xl border border-primary/20 bg-sage-50/50 p-4 cursor-pointer hover:border-primary/40 hover:bg-sage-100 transition-all">
+<input class="h-5 w-5 border-2 border-primary bg-transparent text-primary accent-primary" name="payment_method" type="radio"/>
+<div class="flex grow items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">account_balance</span>
+</div>
+<div class="flex flex-col">
+<p class="text-slate-900 text-sm font-semibold">Bank Transfer</p>
+<p class="text-slate-600 text-xs">Direct bank transfer via mobile banking</p>
+</div>
+</div>
+</label>
+</div>
+
+<!-- Pay Button -->
+<button class="w-full flex items-center justify-center gap-2 rounded-xl h-14 bg-primary hover:bg-sage-700 text-white text-base font-bold transition-all shadow-lg shadow-primary/20">
+<span>Pay Now</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+
+<!-- Security Text -->
+<p class="text-center text-slate-500 text-[10px] mt-4 uppercase tracking-widest font-bold">Encrypted & Secure Transaction</p>
+</div>
+</div>
+</div>
+
+<footer class="mt-20 border-t border-sage-200 dark:border-sage-700 bg-gradient-to-b from-white to-sage-50 dark:from-slate-900 dark:to-background-dark py-16">
+<div class="max-w-7xl mx-auto px-6">
+<!-- Footer Content Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+<!-- Brand Section -->
+<div class="md:col-span-1">
+<div class="flex items-center gap-3 mb-4">
+<img src="logo.png" alt="Care Bite Logo" class="h-10 w-10 rounded-lg object-contain">
+<h2 class="serif-heading text-lg font-bold text-primary dark:text-accent">CareBites</h2>
+</div>
+<p class="text-sm text-sage-600 dark:text-sage-400 leading-relaxed mb-4">Nourishing your wellness journey with science-backed clinical nutrition and wellness essentials.</p>
+<div class="flex gap-4">
+<a class="p-2 bg-sage-100 dark:bg-sage-800 text-primary hover:bg-primary hover:text-white transition-all rounded-lg" href="#" title="Facebook">
+<span class="material-symbols-outlined" style="font-size: 18px;">public</span>
+</a>
+<a class="p-2 bg-sage-100 dark:bg-sage-800 text-primary hover:bg-primary hover:text-white transition-all rounded-lg" href="#" title="Email">
+<span class="material-symbols-outlined" style="font-size: 18px;">mail</span>
+</a>
+<a class="p-2 bg-sage-100 dark:bg-sage-800 text-primary hover:bg-primary hover:text-white transition-all rounded-lg" href="#" title="Instagram">
+<span class="material-symbols-outlined" style="font-size: 18px;">share</span>
+</a>
+</div>
+</div>
+
+<!-- Shop Links -->
+<div>
+<h4 class="font-bold text-sage-800 dark:text-sage-100 mb-4 text-sm uppercase tracking-wide">Shop</h4>
+<ul class="space-y-3 text-sm">
+<li><a class="text-sage-600 dark:text-sage-400 hover:text-primary transition-colors flex items-center gap-2" href="shop.html"><span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>By Condition</a></li>
+<li><a class="text-sage-600 dark:text-sage-400 hover:text-primary transition-colors flex items-center gap-2" href="#"><span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>Clinical Teas</a></li>
+<li><a class="text-sage-600 dark:text-sage-400 hover:text-primary transition-colors flex items-center gap-2" href="#"><span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>Health Snacks</a></li>
+<li><a class="text-sage-600 dark:text-sage-400 hover:text-primary transition-colors flex items-center gap-2" href="#"><span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>Bundles</a></li>
+</ul>
+</div>
+
+<!-- Support Links -->
+<div>
+<h4 class="font-bold text-sage-800 dark:text-sage-100 mb-4 text-sm uppercase tracking-wide">Support</h4>
+<ul class="space-y-3 text-sm">
+<li><a class="text-sage-600 dark:text-sage-400 hover:text-primary transition-colors flex items-center gap-2" href="#"><span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>Expert Advice</a></li>
+<li><a class="text-sage-600 dark:text-sage-400 hover:text-primary transition-colors flex items-center gap-2" href="#"><span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>Shipping Info</a></li>
+<li><a class="text-sage-600 dark:text-sage-400 hover:text-primary transition-colors flex items-center gap-2" href="#"><span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>Returns</a></li>
+<li><a class="text-sage-600 dark:text-sage-400 hover:text-primary transition-colors flex items-center gap-2" href="#"><span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>Contact Us</a></li>
+</ul>
+</div>
+
+<!-- Legal Links -->
+<div>
+<h4 class="font-bold text-sage-800 dark:text-sage-100 mb-4 text-sm uppercase tracking-wide">Legal</h4>
+<ul class="space-y-3 text-sm">
+<li><a class="text-sage-600 dark:text-sage-400 hover:text-primary transition-colors flex items-center gap-2" href="#"><span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>Privacy Policy</a></li>
+<li><a class="text-sage-600 dark:text-sage-400 hover:text-primary transition-colors flex items-center gap-2" href="#"><span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>Terms of Service</a></li>
+<li><a class="text-sage-600 dark:text-sage-400 hover:text-primary transition-colors flex items-center gap-2" href="#"><span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>Disclaimer</a></li>
+<li><a class="text-sage-600 dark:text-sage-400 hover:text-primary transition-colors flex items-center gap-2" href="#"><span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>Cookie Policy</a></li>
+</ul>
+</div>
+</div>
+
+<!-- Divider -->
+<div class="border-t border-sage-200 dark:border-sage-700 pt-8">
+<!-- Bottom Footer -->
+<div class="flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-xs text-sage-500 dark:text-sage-500 text-center md:text-left">© 2025 CareBites. All rights reserved. Crafted with care for your wellness journey.</p>
+<div class="flex gap-4 text-xs text-sage-500 dark:text-sage-500">
+<button class="hover:text-primary transition-colors">Dark Mode</button>
+<span>•</span>
+<a href="#" class="hover:text-primary transition-colors">Accessibility</a>
+<span>•</span>
+<a href="#" class="hover:text-primary transition-colors">Sitemap</a>
+</div>
+</div>
+</div>
+</div>
+</footer>
+
+<script>
+    // Cart system (copied from shop.html for consistency)
+    let cart = [];
+    const SHIPPING_COST = 5.00;
+    const TAX_RATE = 0.08;
+
+    // Toast notification function
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<span>${message}</span>`;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('hide');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Format currency with Rs. prefix and 3-digit comma grouping
+    function formatCurrency(amount) {
+        const rounded = Math.round(amount);
+        return 'Rs.' + rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    // Extract price from text
+    function extractPrice(text) {
+        const match = text.match(/Rs\.(\d+,?\d*)|\$(\d+\.?\d*)/i);
+        return match ? parseFloat((match[1] || match[2]).replace(/,/g, '')) : 0;
+    }
+
+    // Add to cart functionality
+    function attachCartListeners() {
+        document.querySelectorAll('.addToCart').forEach(button => {
+            button.removeEventListener('click', handleAddToCart);
+            button.addEventListener('click', handleAddToCart);
+        });
+    }
+
+    // Check if user is logged in
+    function isUserLoggedIn() {
+        return localStorage.getItem('userName') !== null;
+    }
+
+    // Show login prompt instead of adding to cart
+    function showLoginPrompt() {
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-6 right-6 bg-gradient-to-r from-primary to-sage-600 text-white px-6 py-4 rounded-lg shadow-lg z-50 max-w-sm border-l-4 border-white';
+        toast.innerHTML = `
+            <p class="font-semibold mb-3">Please login to add items to cart</p>
+            <button onclick="window.location.href='auth.html'" class="w-full bg-white text-primary px-4 py-2 rounded-lg font-bold text-sm hover:bg-opacity-90 transition-all">Login Now</button>
+        `;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 5000);
+    }
+
+    function handleAddToCart(e) {
+        e.preventDefault();
+        
+        // Check if user is logged in
+        if (!isUserLoggedIn()) {
+            showLoginPrompt();
+            return;
+        }
+
+        const card = this.closest('.group') || this.closest('[class*="rounded"]');
+        
+        const nameElement = card.querySelector('h4, h5');
+        const priceElement = card.querySelector('span[class*="text-primary"]');
+        const imgElement = card.querySelector('img');
+        
+        const name = nameElement?.textContent?.trim() || 'Product';
+        const price = extractPrice(priceElement?.textContent || '0');
+        const image = imgElement?.src || '';
+        
+        // Add or update cart
+        const existingItem = cart.find(item => item.name === name);
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({ name, price, quantity: 1, image });
+        }
+        
+        updateCartDisplay();
+        showToast(`${name} added to cart!`);
+    }
+
+    // Shopping cart modal functions
+    function openShoppingCart() {
+        document.body.style.overflow = 'hidden';
+        document.getElementById('shoppingCartModal').classList.remove('hidden');
+        renderCartItems();
+    }
+
+    function closeShoppingCart() {
+        document.body.style.overflow = 'auto';
+        document.getElementById('shoppingCartModal').classList.add('hidden');
+    }
+
+    function renderCartItems() {
+        const cartItemsDiv = document.getElementById('cartItems');
+        if (cart.length === 0) {
+            cartItemsDiv.innerHTML = '<p class="text-center text-slate-500">Your cart is empty</p>';
+            return;
+        }
+
+        cartItemsDiv.innerHTML = cart.map((item, index) => `
+            <div class="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-primary/10">
+                <img src="${item.image}" alt="${item.name}" class="w-16 h-16 rounded-lg object-cover">
+                <div class="flex-1">
+                    <h4 class="font-bold text-slate-800 dark:text-slate-100">${item.name}</h4>
+                    <p class="text-sm text-slate-500">Rs.${Math.round(item.price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} each</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="updateQuantity(${index}, -1)" class="p-1 hover:bg-primary/10 rounded">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">remove</span>
+                    </button>
+                    <span class="font-bold text-slate-800 dark:text-slate-100 w-6 text-center">${item.quantity}</span>
+                    <button onclick="updateQuantity(${index}, 1)" class="p-1 hover:bg-primary/10 rounded">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+                    </button>
+                </div>
+                <button onclick="removeFromCart(${index})" class="p-2 text-red-500 hover:bg-red-50 rounded-lg">
+                    <span class="material-symbols-outlined" style="font-size: 20px;">delete</span>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    function updateQuantity(index, change) {
+        const item = cart[index];
+        item.quantity += change;
+        if (item.quantity <= 0) {
+            removeFromCart(index);
+        } else {
+            updateCartDisplay();
+            renderCartItems();
+        }
+    }
+
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        updateCartDisplay();
+        renderCartItems();
+    }
+
+    // Update cart display
+    function updateCartDisplay() {
+        const cartCount = document.getElementById('cartCount');
+        if (cartCount) {
+            cartCount.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+        }
+
+        // Update order summary
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const taxAmount = subtotal * TAX_RATE;
+        const total = subtotal + SHIPPING_COST + taxAmount;
+
+        document.getElementById('subtotal').textContent = formatCurrency(subtotal);
+        document.getElementById('tax').textContent = formatCurrency(taxAmount);
+        document.getElementById('total').textContent = formatCurrency(total);
+    }
+
+    // Initialize dashboard
+    function initializeDashboard() {
+        attachCartListeners();
+        initializeAuthButton();
+    }
+
+    // Initialize auth button on page load
+    function initializeAuthButton() {
+        const authBtn = document.getElementById('authBtn');
+        const authText = document.getElementById('authText');
+        
+        if (isUserLoggedIn()) {
+            authText.textContent = 'Logout';
+            authBtn.onclick = logout;
+        } else {
+            authText.textContent = 'Login';
+            authBtn.onclick = () => window.location.href = 'auth.html';
+        }
+    }
+
+    // Check if user is logged in
+    function isUserLoggedIn() {
+        return localStorage.getItem('userName') !== null;
+    }
+
+    // Logout function
+    function logout() {
+        localStorage.removeItem('userName');
+        window.location.href = 'index.html';
+    }
+
+    // Initialize on page load
+    initializeDashboard();
+
+    // Add CSS for toast notifications
+    const style = document.createElement('style');
+    style.textContent = `
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9999;
+            animation: slideInUp 0.3s ease-out forwards;
+            max-width: 350px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+        
+        .toast.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-left: 4px solid #047857;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutDown {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+        }
+        
+        .toast.hide {
+            animation: slideOutDown 0.3s ease-out forwards;
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Checkout modal functionality
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const checkoutModal = document.getElementById('checkoutModal');
+    const closeCheckoutBtn = document.getElementById('closeCheckout');
+
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+            const total = document.getElementById('total').textContent;
+            document.getElementById('checkoutTotal').textContent = total;
+            checkoutModal.classList.remove('hidden');
+        });
+    }
+
+    if (closeCheckoutBtn) {
+        closeCheckoutBtn.addEventListener('click', () => {
+            checkoutModal.classList.add('hidden');
+        });
+    }
+
+    // Close checkout modal when clicking outside
+    checkoutModal?.addEventListener('click', (e) => {
+        if (e.target === checkoutModal) {
+            checkoutModal.classList.add('hidden');
+        }
+    });
+</script>
+</body></html>

@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Shop by Condition</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1f3a14", // Deep Forest Green
+                        "accent": "#6b9f52",  // Vibrant Green
+                        "neutral-warm": "#fcfaf7", // Warm Cream
+                        "background-light": "#f0f5e8",
+                        "background-dark": "#0f1f0a",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Public Sans', sans-serif; }
+        .serif-heading { font-family: 'Playfair Display', serif; }
+        
+        /* Material Symbols Icon Styles */
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            display: inline-flex;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9999;
+            animation: slideInUp 0.3s ease-out forwards;
+            max-width: 350px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+        
+        .toast.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-left: 4px solid #047857;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOutDown {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+        }
+        
+        .toast.hide {
+            animation: slideOutDown 0.3s ease-out forwards;
+        }
+
+        /* Filter button styles */
+        .filter-btn {
+            border: 2px solid #4a5d4e;
+            color: #4a5d4e;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            background-color: #4a5d4e;
+            color: white;
+        }
+
+        .filter-btn.active {
+            background-color: #4a5d4e;
+            color: white;
+        }
+
+        /* Override hover zoom for smooth effect */
+        img[class*="group-hover:scale-110"] {
+            transition: transform 0.3s ease-out !important;
+        }
+
+        .group:hover img[class*="scale-110"] {
+            transform: scale(1.05) !important;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<nav class="sticky top-0 z-50 bg-cream-100/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-sage-200 dark:border-sage-700">
+<div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+<div class="flex items-center gap-12">
+<div class="flex items-center gap-2">
+<img src="logo.png" alt="Care Bite Logo" class="h-16 w-16 rounded-lg object-contain">
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-sage-600 hover:text-primary transition-colors" href="dashboard.html">Home</a>
+<a class="text-sm font-medium text-sage-600 hover:text-primary transition-colors" href="shop.html">Shop by Condition</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button id="cartBtn" class="p-2 hover:bg-primary/5 rounded-full relative" onclick="openShoppingCart()">
+<span class="material-symbols-outlined" style="font-size: 24px;">shopping_cart</span>
+<span id="cartCount" class="absolute top-1 right-1 bg-primary text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+</button>
+<button id="authBtn" class="px-4 py-2 text-sm font-bold text-white bg-primary/20 hover:bg-primary/30 rounded border border-primary transition-all" style="border-radius: 7px;">
+<span id="authText">Login</span>
+</button>
+</div>
+</div>
+</nav>
+<main class="max-w-7xl mx-auto px-6 py-10">
+<!-- Hero Section -->
+<div class="mb-16">
+<h2 class="serif-heading text-5xl font-bold text-primary mb-4">Shop by Condition</h2>
+<p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
+Expertly curated clinical nutrition and wellness essentials tailored to support your specific journey. Find peace of mind in every bite.
+</p>
+</div>
+
+<!-- Category Filter Bar -->
+<div class="mb-12 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md p-4 rounded-2xl border border-primary/10">
+<div class="flex items-center justify-center gap-3 flex-wrap">
+<button class="filter-btn active px-6 py-2 font-bold rounded-full transition-all" data-category="all">All Products</button>
+<button class="filter-btn px-6 py-2 font-bold rounded-full transition-all" data-category="diabetes">Diabetes</button>
+<button class="filter-btn px-6 py-2 font-bold rounded-full transition-all" data-category="hypertension">Hypertension</button>
+<button class="filter-btn px-6 py-2 font-bold rounded-full transition-all" data-category="pcos">PCOS/PCOD</button>
+<button class="filter-btn px-6 py-2 font-bold rounded-full transition-all" data-category="heart">Heart Health</button>
+<button class="filter-btn px-6 py-2 font-bold rounded-full transition-all" data-category="thyroid">Thyroid</button>
+</div>
+</div>
+
+<!-- Diabetes Section -->
+<section class="mb-20" data-category="diabetes">
+<div class="flex items-end justify-between mb-8">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-blue-600" style="font-size: 18px;">monitoring</span>
+</div>
+<h3 class="serif-heading text-3xl font-bold text-primary">Diabetes Management</h3>
+</div>
+<p class="text-slate-500 mt-1">Blood sugar control and metabolic support.</p>
+</div>
+<button onclick="openViewAllModal('diabetes')" class="text-sm font-bold text-primary flex items-center gap-1 hover:underline underline-offset-4">
+View all <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- Product Card -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuASzXKATA03u0pjUySxfnFWKvEyCp84yFyUiuu9yiaBk3i4WibH1IaZ_m6ilSdYcVRDrbwcvDZ159gFTUvGGgl-E31fzmjrx9sqzkreqT1bE1HMNM-OCC-AU65GJ57ejJP7HjjjtLOiRlUdPrXIWnGiBdrilxUqBxU1ON2xJ1VKl9Btt8Fp5fgXHgB2qdUkANuFdnKg1Xh53IQJy6E01rTl4WOcwstXb9VjtB273HQfFsdWJpTtTjiDlkPQvhmVercIbDjKM8rn5VYy"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Chickpea Snack</h4>
+<span class="font-bold text-primary">Rs.12</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 italic">High-protein, fiber-rich snack for steady glucose levels.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+<!-- Product Card -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUpZlzUmt2B8QLIwAweiw3h4fLWgpZYqOm3U7Fh0RsOnqTWlkSG_Anot7fjsrmFaxzvP7pyEykHlef-TYpOFkP73UrsxADlMVeO3tObQel&s=10"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Fenugreek Seeds</h4>
+<span class="font-bold text-primary">Rs.15</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 italic">Traditional herb for blood sugar regulation and metabolic health.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+<!-- Product Card -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://chasdomundo.pt/blog/wp-content/uploads/2024/04/melao-de-sao-caetano-beneficios-e-propriedades.jpg"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Bitter Melon Tea</h4>
+<span class="font-bold text-primary">Rs.17</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 italic">Helps reduce blood glucose and improve insulin sensitivity.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+<!-- Product Card -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaiv_Sd_zohbvFUzOsVshHpBx7ry20nYPRL538yy56MxWFicLLr7mYzIG9xsrHoCHfhH9UWIiFSBH0Jo6I6zGuqVGa_Z9DGw-oMVa-fjfqYVPM-MdFWp51VedH8ipOfVz8O4PNdjfd2q6lFKcBrLhEyqJEGTgu8F8HtKTg0qjLgVnpIW_FEM3ilR425Qi-9O2vYuFrHCqVF_e4y5hLrcHsQa369BWQo_8VHOiUGsLMv0PanOmtgfcAgF4T_vvr9eHVXiDFlKblhfgM"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Nuts & Seeds Mix</h4>
+<span class="font-bold text-primary">Rs.20</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 italic">Almonds, walnuts, and chia seeds for sustained energy and fiber.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Hypertension Section -->
+<section class="mb-20" data-category="hypertension">
+<div class="flex items-end justify-between mb-8">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-red-600" style="font-size: 18px;">favorite</span>
+</div>
+<h3 class="serif-heading text-3xl font-bold text-primary">Hypertension Support</h3>
+</div>
+<p class="text-slate-500 mt-1">Blood pressure regulation and heart health.</p>
+</div>
+<button onclick="openViewAllModal('hypertension')" class="text-sm font-bold text-primary flex items-center gap-1 hover:underline underline-offset-4">
+View all <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- Product Card -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://www.teavision.com.au/cdn/shop/articles/hibiscus_tea_benefits_1024x.jpg?v=1716874855"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Hibiscus Tea</h4>
+<span class="font-bold text-primary">Rs.14</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 italic">Natural blood pressure reducer with antioxidants, caffeine-free.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+<!-- Product Card -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://www.organicnationeg.com/cdn/shop/files/Potassium-Blend-Box-_-Bottle-mockup_b30b7840-aeb2-4554-8eae-698c74501e64.png?v=1771463370&width=720"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Potassium Blend</h4>
+<span class="font-bold text-primary">Rs.18</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 italic">Mineral-rich seeds supporting cardiovascular health and BP balance.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+<!-- Product Card -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoXJkdRX_9NizAzU1VJNMA09VnVjVIwNx78_YarARgNmYOyCTj9N7QuTliD9IdFhO6BSy4FxMRf1vpZjEWg2xa-xdk2p96emnzBH48qIKnPUJF2-JSVm5moH6sbTCtif6NrLmIDGz5u-5EGaa-HMAWxhQ-YsZ78ADZfCreg1G6DB_NljGmcDclaL7vdU4dpzysjGpcivbbh_CgXVouNOBFCB80xrAzeiBbfD-Aq943Vr4f4r0nEC_2YuW55A3BHSECEq09h_cO8H-H"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Garlic Extract Tea</h4>
+<span class="font-bold text-primary">Rs.15</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 italic">Aged garlic extract for cardiovascular support and vasodilation.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+</div>
+</section>
+
+<!-- PCOS/PCOD Section -->
+<section class="mb-20" data-category="pcos">
+<div class="flex items-end justify-between mb-8">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-green-600" style="font-size: 18px;">potted_plant</span>
+</div>
+<h3 class="serif-heading text-3xl font-bold text-primary">PCOS/PCOD Essentials</h3>
+</div>
+<p class="text-slate-500 mt-1">Hormone-balancing foods and teas designed for cycle regularity.</p>
+</div>
+<button onclick="openViewAllModal('pcos')" class="text-sm font-bold text-primary flex items-center gap-1 hover:underline underline-offset-4">
+View all <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- Product Card -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAbcZ3ahPY94sYQ7hBZD5FtEyYhKS7PBsOZbrQTv8oUiMNQWg-kl0WMj7JgZVMB-vFiB0W-p6rPbK5y_JmWZKHAR_PvxR8bm9k_srujyknj8daX3WtfxFp3aClNrkIZBY3IMpfdEpzWg82p9yaPVbE6S0tNDUgsjY3CHEl8KRrQLihJgks1kNaPnkPVHxckWieLYWYhIdjBEuQkNy7X-G8i1jIpeDX4fFcll8jbDmzD_QGHVGaObgJOygbJAjAv0CwKhlC7btz-q8b"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Spearmint Tea</h4>
+<span class="font-bold text-primary">Rs.19</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 italic">Premium Egyptian spearmint for androgen reduction and cycle support.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+<!-- Product Card -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaiv_Sd_zohbvFUzOsVshHpBx7ry20nYPRL538yy56MxWFicLLr7mYzIG9xsrHoCHfhH9UWIiFSBH0Jo6I6zGuqVGa_Z9DGw-oMVa-fjfqYVPM-MdFWp51VedH8ipOfVz8O4PNdjfd2q6lFKcBrLhEyqJEGTgu8F8HtKTg0qjLgVnpIW_FEM3ilR425Qi-9O2vYuFrHCqVF_e4y5hLrcHsQa369BWQo_8VHOiUGsLMv0PanOmtgfcAgF4T_vvr9eHVXiDFlKblhfgM"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Hormone Balance</h4>
+<span class="font-bold text-primary">Rs.24</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 italic">Pumpkin seeds, flax, and walnuts for healthy hormone synthesis.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+<!-- Product Card -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoXJkdRX_9NizAzU1VJNMA09VnVjVIwNx78_YarARgNmYOyCTj9N7QuTliD9IdFhO6BSy4FxMRf1vpZjEWg2xa-xdk2p96emnzBH48qIKnPUJF2-JSVm5moH6sbTCtif6NrLmIDGz5u-5EGaa-HMAWxhQ-YsZ78ADZfCreg1G6DB_NljGmcDclaL7vdU4dpzysjGpcivbbh_CgXVouNOBFCB80xrAzeiBbfD-Aq943Vr4f4r0nEC_2YuW55A3BHSECEq09h_cO8H-H"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Cinnamon Bark Tea</h4>
+<span class="font-bold text-primary">Rs.15</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 italic">Ceylon cinnamon for blood sugar and cycle regulation.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+<!-- Product Card -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuASzXKATA03u0pjUySxfnFWKvEyCp84yFyUiuu9yiaBk3i4WibH1IaZ_m6ilSdYcVRDrbwcvDZ159gFTUvGGgl-E31fzmjrx9sqzkreqT1bE1HMNM-OCC-AU65GJ57ejJP7HjjjtLOiRlUdPrXIWnGiBdrilxUqBxU1ON2xJ1VKl9Btt8Fp5fgXHgB2qdUkANuFdnKg1Xh53IQJy6E01rTl4WOcwstXb9VjtB273HQfFsdWJpTtTjiDlkPQvhmVercIbDjKM8rn5VYy"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Roasted Chickpeas</h4>
+<span class="font-bold text-primary">Rs.12</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 italic">Turmeric and sea salt blend for insulin sensitivity boost.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Heart Health Section -->
+<section class="mb-20" data-category="heart">
+<div class="flex items-end justify-between mb-8">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<div class="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-pink-600" style="font-size: 18px;">cardiology</span>
+</div>
+<h3 class="serif-heading text-3xl font-bold text-primary">Heart Health</h3>
+</div>
+<p class="text-slate-500 mt-1">Cholesterol management and cardiovascular support.</p>
+</div>
+<button onclick="openViewAllModal('heart')" class="text-sm font-bold text-primary flex items-center gap-1 hover:underline underline-offset-4">
+View all <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- Product Card -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://pranafoods.ca/cdn/shop/products/Prana_produit_siteweb_Superseed_linchia_1.jpg?v=1681764912"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Flax & Chia Mix</h4>
+<span class="font-bold text-primary">Rs.17</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 italic">Omega-3 rich seeds for cholesterol management and heart health.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+<!-- Product Card -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://www.traditionalmedicinals.com/cdn/shop/files/TM_PDP_Hawthorn_Hibiscus_square_01_1_448x448.jpg?v=1761599252"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Hawthorn Berry Tea</h4>
+<span class="font-bold text-primary">Rs.15</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 italic">Traditional herb supporting cardio strength and circulation.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+<!-- Product Card -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://images.archanaskitchen.com/images/recipes/drink-recipes/drinks-beverages-smoothie-recipes/Homemade_Pomegranate_Juice_With_Ginger_1_d25684ea99.jpg"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Pomegranate Juice</h4>
+<span class="font-bold text-primary">Rs.20</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 italic">Pure pomegranate with powerful antioxidants for vessel health.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Thyroid Section -->
+<section class="mb-20" data-category="thyroid">
+<div class="flex items-end justify-between mb-8">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-purple-600" style="font-size: 18px;">spa</span>
+</div>
+<h3 class="serif-heading text-3xl font-bold text-primary">Thyroid Support</h3>
+</div>
+<p class="text-slate-500 mt-1">Iodine-rich foods and metabolism boosters.</p>
+</div>
+<button onclick="openViewAllModal('thyroid')" class="text-sm font-bold text-primary flex items-center gap-1 hover:underline underline-offset-4">
+View all <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- Product Card -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://i0.wp.com/post.healthline.com/wp-content/uploads/2020/03/kelp-1296x728-header-1.jpg?w=1155&h=1528"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Kelp Seaweed</h4>
+<span class="font-bold text-primary">Rs.14</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 italic">Organic sea kelp with iodine for thyroid hormone production.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+<!-- Product Card -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://nwwildfoods.com/cdn/shop/files/brazil_nuts_in_bowl.jpg?v=1763518989"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Brazil Nut Snack</h4>
+<span class="font-bold text-primary">Rs.22</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 italic">Selenium-rich Brazil nuts supporting thyroid enzyme function.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+<!-- Product Card -->
+<div class="group bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-primary/5 hover:border-accent hover:-translate-y-2 transition-all duration-300">
+<div class="relative aspect-square overflow-hidden bg-neutral-warm">
+<img class="w-full h-full object-cover mix-blend-multiply group-hover:scale-110 transition-transform duration-500" src="https://tucsontea.com/cdn/shop/files/SP-ashwagandha-root-tea.jpg?v=1705558317"/>
+</div>
+<div class="p-6">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-bold text-lg text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors">Ashwagandha Tea</h4>
+<span class="font-bold text-primary">Rs.19</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 italic">Adaptogenic herb for thyroid balance and stress management.</p>
+<button class="addToCart w-full py-3 bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add_shopping_cart</span>
+Add to Cart
+</button>
+</div>
+</div>
+</div>
+</section>
+
+<!-- View All Modal -->
+<div id="viewAllModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+<div class="bg-white dark:bg-slate-800 rounded-3xl w-11/12 max-w-5xl max-h-[90vh] overflow-y-auto">
+<div class="sticky top-0 bg-white dark:bg-slate-800 p-6 border-b border-primary/10 flex items-center justify-between">
+<h2 id="modalTitle" class="serif-heading text-3xl font-bold text-primary"></h2>
+<button onclick="closeViewAllModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition">
+<span class="material-symbols-outlined" style="font-size: 28px;">close</span>
+</button>
+</div>
+<div id="modalProducts" class="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- Products will be inserted here -->
+</div>
+</div>
+</div>
+
+<!-- Shopping Cart Modal -->
+<div id="shoppingCartModal" class="hidden fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm">
+<div class="bg-white dark:bg-slate-800 w-full sm:w-96 h-full overflow-y-auto flex flex-col">
+<!-- Cart Header -->
+<div class="sticky top-0 bg-white dark:bg-slate-800 p-6 border-b border-primary/10 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<img src="logo.png" alt="Care Bite Logo" class="h-8 w-8 rounded object-contain">
+<h2 class="serif-heading text-xl font-bold text-slate-900 dark:text-slate-100">Your Shopping Bag</h2>
+</div>
+<button onclick="closeShoppingCart()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition">
+<span class="material-symbols-outlined" style="font-size: 28px;">close</span>
+</button>
+</div>
+
+<!-- Cart Items -->
+<div id="cartItems" class="flex-1 p-6 space-y-4 overflow-y-auto">
+<!-- Cart items will be inserted here -->
+</div>
+
+<!-- Order Summary -->
+<div class="border-t border-primary/10 p-6 bg-slate-50 dark:bg-slate-700/30">
+<h3 class="text-slate-900 dark:text-slate-100 font-bold mb-4">Order Summary</h3>
+<div class="space-y-2 text-sm mb-4">
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span>Subtotal</span>
+<span id="subtotal">Rs.0</span>
+</div>
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span>Shipping</span>
+<span id="shipping">Rs.5</span>
+</div>
+<div class="flex justify-between text-slate-600 dark:text-slate-400">
+<span>Estimated Tax</span>
+<span id="tax">Rs.0</span>
+</div>
+</div>
+<div class="flex justify-between text-lg font-bold text-slate-900 dark:text-slate-100 border-t border-primary/10 pt-4 mb-6">
+<span>Total</span>
+<span id="total">Rs.0</span>
+</div>
+<button id="checkoutBtn" class="w-full bg-primary hover:bg-sage-700 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2">
+Proceed to Checkout <span class="material-symbols-outlined" style="font-size: 20px;">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+
+<!-- Checkout Modal Popup -->
+<div id="checkoutModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+<!-- Backdrop -->
+<div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+
+<!-- Modal Container -->
+<div class="relative w-full max-w-[480px] bg-white rounded-2xl shadow-2xl overflow-hidden border border-primary/10">
+<!-- Header -->
+<div class="flex items-center justify-between border-b border-primary/10 px-6 py-4 bg-primary/5">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-2xl">account_balance_wallet</span>
+<h2 class="text-primary text-lg font-bold">Checkout</h2>
+</div>
+<button id="closeCheckout" class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+
+<!-- Content -->
+<div class="px-6 py-6">
+<div class="mb-6">
+<p class="text-primary text-2xl font-bold">Select Payment Method</p>
+<p class="text-slate-600 text-sm mt-1">Secure and fast payments for your wellness products</p>
+</div>
+
+<!-- Order Summary -->
+<div class="bg-sage-50 rounded-xl p-4 mb-6 border border-primary/10">
+<div class="flex justify-between items-center">
+<p class="text-slate-700 text-sm font-medium">Total Amount</p>
+<p class="text-primary text-xl font-bold" id="checkoutTotal">Rs.0</p>
+</div>
+</div>
+
+<!-- Payment Methods -->
+<div class="flex flex-col gap-3 mb-6">
+<!-- eSewa -->
+<label class="flex items-center gap-4 rounded-xl border border-primary/20 bg-sage-50/50 p-4 cursor-pointer hover:border-primary/40 hover:bg-sage-100 transition-all">
+<input checked="" class="h-5 w-5 border-2 border-primary bg-transparent text-primary accent-primary" name="payment_method" type="radio"/>
+<div class="flex grow items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">payments</span>
+</div>
+<div class="flex flex-col">
+<p class="text-slate-900 text-sm font-semibold">eSewa</p>
+<p class="text-slate-600 text-xs">Pay with your eSewa digital wallet</p>
+</div>
+</div>
+</label>
+
+<!-- Khalti -->
+<label class="flex items-center gap-4 rounded-xl border border-primary/20 bg-sage-50/50 p-4 cursor-pointer hover:border-primary/40 hover:bg-sage-100 transition-all">
+<input class="h-5 w-5 border-2 border-primary bg-transparent text-primary accent-primary" name="payment_method" type="radio"/>
+<div class="flex grow items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">wallet</span>
+</div>
+<div class="flex flex-col">
+<p class="text-slate-900 text-sm font-semibold">Khalti</p>
+<p class="text-slate-600 text-xs">Pay with your Khalti digital wallet</p>
+</div>
+</div>
+</label>
+
+<!-- Bank Transfer -->
+<label class="flex items-center gap-4 rounded-xl border border-primary/20 bg-sage-50/50 p-4 cursor-pointer hover:border-primary/40 hover:bg-sage-100 transition-all">
+<input class="h-5 w-5 border-2 border-primary bg-transparent text-primary accent-primary" name="payment_method" type="radio"/>
+<div class="flex grow items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-size: 20px;">account_balance</span>
+</div>
+<div class="flex flex-col">
+<p class="text-slate-900 text-sm font-semibold">Bank Transfer</p>
+<p class="text-slate-600 text-xs">Direct bank transfer via mobile banking</p>
+</div>
+</div>
+</label>
+</div>
+
+<!-- Pay Button -->
+<button class="w-full flex items-center justify-center gap-2 rounded-xl h-14 bg-primary hover:bg-sage-700 text-white text-base font-bold transition-all shadow-lg shadow-primary/20">
+<span>Pay Now</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+
+<!-- Security Text -->
+<p class="text-center text-slate-500 text-[10px] mt-4 uppercase tracking-widest font-bold">Encrypted & Secure Transaction</p>
+</div>
+</div>
+</div>
+
+
+
+
+
+<script>
+    // Cart system
+    let cart = [];
+    const SHIPPING_COST = 5.00;
+    const TAX_RATE = 0.08;
+
+    // Toast notification function
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<span>${message}</span>`;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('hide');
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }, 3000);
+    }
+
+    // Format currency with Rs. prefix and 3-digit comma grouping
+    function formatCurrency(amount) {
+        const rounded = Math.round(amount);
+        return 'Rs.' + rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    // Extract price from text
+    function extractPrice(priceText) {
+        const match = priceText.match(/Rs\.(\d+,?\d*)|Rs\.(\d+)|[\d.]+/i);
+        return match ? parseFloat((match[1] || match[2] || match[0]).replace(/,/g, '')) : 0;
+    }
+
+    // Add to cart functionality
+    function attachAddToCartListeners() {
+        document.querySelectorAll('.addToCart').forEach(button => {
+            button.removeEventListener('click', handleAddToCart);
+            button.addEventListener('click', handleAddToCart);
+        });
+    }
+
+    // Check if user is logged in
+    function isUserLoggedIn() {
+        return localStorage.getItem('userName') !== null;
+    }
+
+    // Initialize auth button on page load
+    function initializeAuthButton() {
+        const authBtn = document.getElementById('authBtn');
+        const authText = document.getElementById('authText');
+        
+        if (isUserLoggedIn()) {
+            authText.textContent = 'Logout';
+            authBtn.onclick = logout;
+        } else {
+            authText.textContent = 'Login';
+            authBtn.onclick = () => window.location.href = 'auth.html';
+        }
+    }
+
+    // Logout function
+    function logout() {
+        localStorage.removeItem('userName');
+        window.location.href = 'index.html';
+    }
+
+    // Show login prompt instead of adding to cart
+    function showLoginPrompt() {
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-6 right-6 bg-gradient-to-r from-primary to-sage-600 text-white px-6 py-4 rounded-lg shadow-lg z-50 max-w-sm border-l-4 border-white';
+        toast.innerHTML = `
+            <p class="font-semibold mb-3">Please login to add items to cart</p>
+            <button onclick="window.location.href='auth.html'" class="w-full bg-white text-primary px-4 py-2 rounded-lg font-bold text-sm hover:bg-opacity-90 transition-all">Login Now</button>
+        `;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 5000);
+    }
+
+    function handleAddToCart(e) {
+        e.preventDefault();
+        
+        // Check if user is logged in
+        if (!isUserLoggedIn()) {
+            showLoginPrompt();
+            return;
+        }
+
+        const card = this.closest('.group');
+        const productName = card.querySelector('h4').textContent;
+        const priceSpan = card.querySelector('.flex.justify-between span:last-child, .font-bold.text-primary');
+        const price = extractPrice(priceSpan?.textContent || '0');
+        const imageUrl = card.querySelector('img').src;
+
+        // Add or update cart item
+        const existingItem = cart.find(item => item.name === productName);
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({
+                name: productName,
+                price: price,
+                quantity: 1,
+                image: imageUrl
+            });
+        }
+
+        updateCartDisplay();
+        showToast(`${productName} added to cart!`);
+    }
+
+    // Update cart display
+    function updateCartDisplay() {
+        const cartItemsContainer = document.getElementById('cartItems');
+        const cartCountElement = document.getElementById('cartCount');
+        
+        // Update cart count
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        cartCountElement.textContent = totalItems;
+
+        // Clear and regenerate cart items
+        cartItemsContainer.innerHTML = '';
+
+        if (cart.length === 0) {
+            cartItemsContainer.innerHTML = '<p class="text-slate-500 text-center py-8">Your cart is empty</p>';
+        } else {
+            cart.forEach((item, index) => {
+                const itemTotal = (item.price * item.quantity).toFixed(2);
+                const itemHTML = `
+                    <div class="flex gap-4 border border-primary/10 rounded-lg p-4">
+                        <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded-lg">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-slate-900 dark:text-slate-100">${item.name}</h4>
+                            <p class="text-primary font-bold">Rs.${Math.round(item.price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</p>
+                            <div class="flex items-center gap-2 mt-2">
+                                <button onclick="updateQuantity(${index}, -1)" class="text-slate-400 hover:text-primary transition">
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">remove</span>
+                                </button>
+                                <span class="font-bold text-slate-900 dark:text-slate-100">${item.quantity}</span>
+                                <button onclick="updateQuantity(${index}, 1)" class="text-slate-400 hover:text-primary transition">
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+                                </button>
+                                <button onclick="removeFromCart(${index})" class="ml-auto text-slate-400 hover:text-red-500 transition">
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-slate-900 dark:text-slate-100">Rs.${Math.round(itemTotal).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</p>
+                        </div>
+                    </div>
+                `;
+                cartItemsContainer.innerHTML += itemHTML;
+            });
+        }
+
+        // Update order summary
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const taxAmount = subtotal * TAX_RATE;
+        const total = subtotal + SHIPPING_COST + taxAmount;
+
+        document.getElementById('subtotal').textContent = formatCurrency(subtotal);
+        document.getElementById('tax').textContent = formatCurrency(taxAmount);
+        document.getElementById('total').textContent = formatCurrency(total);
+    }
+
+    function updateQuantity(index, change) {
+        if (cart[index]) {
+            cart[index].quantity += change;
+            if (cart[index].quantity <= 0) {
+                removeFromCart(index);
+            } else {
+                updateCartDisplay();
+            }
+        }
+    }
+
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        updateCartDisplay();
+    }
+
+    function openShoppingCart() {
+        document.getElementById('shoppingCartModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeShoppingCart() {
+        document.getElementById('shoppingCartModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Cart button click
+    document.getElementById('cartBtn')?.addEventListener('click', () => {
+        openShoppingCart();
+    });
+
+    // Initialize cart display on page load
+    attachAddToCartListeners();
+
+    // Go to auth
+    function goToAuth() {
+        window.location.href = 'auth.html';
+    }
+
+    // Category filter functionality
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active', 'bg-primary', 'text-white'));
+            btn.classList.add('active', 'bg-primary', 'text-white');
+            
+            const category = btn.dataset.category;
+            const sections = document.querySelectorAll('section[data-category]');
+            
+            sections.forEach(section => {
+                if (category === 'all') {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = section.dataset.category === category ? 'block' : 'none';
+                }
+            });
+        });
+    });
+
+    // Set initial filter button style
+    document.querySelector('.filter-btn.active').classList.add('bg-primary', 'text-white');
+
+    // Shopping cart button listener
+    document.getElementById('cartBtn').addEventListener('click', openShoppingCart);
+
+    // Initialize auth button based on login status
+    initializeAuthButton();
+
+    // View All Modal functionality
+    const categoryTitles = {
+        'diabetes': 'Diabetes Management',
+        'hypertension': 'Hypertension Support',
+        'pcos': 'PCOS/PCOD Essentials',
+        'heart': 'Heart Health',
+        'thyroid': 'Thyroid Support'
+    };
+
+    function openViewAllModal(category) {
+        const modal = document.getElementById('viewAllModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalProducts = document.getElementById('modalProducts');
+        
+        modalTitle.textContent = categoryTitles[category];
+        const section = document.querySelector(`section[data-category="${category}"]`);
+        const productCards = section.querySelectorAll('.group');
+        
+        modalProducts.innerHTML = '';
+        productCards.forEach(card => {
+            const clonedCard = card.cloneNode(true);
+            modalProducts.appendChild(clonedCard);
+            
+            // Re-attach event listeners for cloned buttons
+            const clonedButton = clonedCard.querySelector('.addToCart');
+            if (clonedButton) {
+                clonedButton.addEventListener('click', handleAddToCart);
+            }
+        });
+        
+        modal.classList.remove('hidden');
+    }
+
+    function closeViewAllModal() {
+        document.getElementById('viewAllModal').classList.add('hidden');
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('viewAllModal')?.addEventListener('click', (e) => {
+        if (e.target === document.getElementById('viewAllModal')) {
+            closeViewAllModal();
+        }
+    });
+
+    // Checkout modal functionality
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const checkoutModal = document.getElementById('checkoutModal');
+    const closeCheckoutBtn = document.getElementById('closeCheckout');
+
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+            const total = document.getElementById('total').textContent;
+            document.getElementById('checkoutTotal').textContent = total;
+            checkoutModal.classList.remove('hidden');
+        });
+    }
+
+    if (closeCheckoutBtn) {
+        closeCheckoutBtn.addEventListener('click', () => {
+            checkoutModal.classList.add('hidden');
+        });
+    }
+
+    // Close checkout modal when clicking outside
+    checkoutModal?.addEventListener('click', (e) => {
+        if (e.target === checkoutModal) {
+            checkoutModal.classList.add('hidden');
+        }
+    });
+
+</script>
+</body></html>
